@@ -50,6 +50,36 @@ Recommend vectors based on project characteristics:
 - Frontend projects → xss, prototype_pollution, postmessage vectors rank high
 - Mobile projects → insecure_data_storage, insecure_communication vectors rank high
 
+### Bug Bounty Prioritization
+
+When ranking vectors, weight them by typical bounty payout and acceptance rates. The following vectors produce the highest-value and most commonly accepted bug bounty findings:
+
+**Tier 1 — Highest payout, most programs accept:**
+- bola, bfla (IDOR/authorization bypass): Most common critical/high finding in bounty programs
+- sql-injection, command-injection, template-injection: RCE and data exfiltration
+- ssrf: Cloud metadata access, internal network pivoting
+- path-traversal, file-inclusion: File read/write primitives
+- oauth-misconfiguration: Account takeover chains
+- race-condition: Financial/business logic abuse
+
+**Tier 2 — High payout, frequently accepted:**
+- mass-assignment, privesc: Privilege escalation
+- broken-authn, jwt-impl, missing-authn: Authentication bypass
+- unsafe-deserialization, xxe: Server-side exploitation
+- open-redirect: Often chained with OAuth for token theft
+- cors-misconfiguration: Cross-origin data theft with credentials
+- websocket-hijacking: Cross-site WebSocket hijacking
+
+**Tier 3 — Medium payout, commonly accepted:**
+- dom-xss, mxss: Client-side code execution
+- graphql-introspection, graphql-injection: Schema exposure and abuse
+- csrf: State-changing action forgery
+- password-reset-vuln, weak-verification-token: Account takeover
+- header-injection: Response splitting, cache poisoning
+- arbitrary-upload, unrestricted-file-type: Web shell upload
+
+Apply this tiering as a tiebreaker when multiple vectors have similar relevance to the project. In quick mode, prefer Tier 1 vectors. In balanced mode, cover Tier 1 and Tier 2.
+
 ### Vector Validity
 
 Read `<skill_dir>/criteria/index.yaml` to get the valid agent→vector mappings per project type. Only recommend vectors from the valid list for each project's type. If a mapping suggests a vector not in the valid list, skip it.

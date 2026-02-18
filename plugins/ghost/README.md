@@ -28,19 +28,24 @@ Full documentation, tutorials, and video usage guides are available at [ghostsec
    /ghost-repo-context       # Build a shared repository context used by all the scan skills
    ```
 
-4. Run scans to understand the security posture of your repository:
+4. Map the attack surface (recommended for bug bounty):
+   ```
+   /ghost-attack-surface     # Enumerate endpoints, auth flows, and high-value targets
+   ```
+
+5. Run scans to understand the security posture of your repository:
    ```
    /ghost-scan-deps     # Exploitability analysis of dependency vulnerabilities (SCA)
-   /ghost-scan-secrets  # Context assessment of detected secrets and credentials 
+   /ghost-scan-secrets  # Context assessment of detected secrets and credentials
    /ghost-scan-code     # AI-powered detection of code security issues (SAST)
    ```
 
-5. Generate a combined security report:
+6. Generate a combined security report:
    ```
-   /ghost-report        # Combined security report across all scan results
+   /ghost-report        # Combined security report with bug bounty submission briefs
    ```
 
-6. Validate findings against a live application:
+7. Validate findings against a live application:
    ```
    /ghost-validate      # Dynamic/live validation against a live application (DAST)
    ```

@@ -8,6 +8,8 @@
 - **Vector**: <vector_name>
 - **CWE**: <cwe_id>
 - **Severity**: <high|medium|low>
+- **CVSS Vector**: <CVSS:3.1/AV:_/AC:_/PR:_/UI:_/S:_/C:_/I:_/A:_ — estimate based on the vulnerability characteristics>
+- **CVSS Score**: <numeric score, e.g. 8.1 — estimate based on the vector>
 - **Status**: unverified (always set this to unverified. the verifier will set this to verified or rejected)
 
 ## Location

@@ -28,6 +28,10 @@
     "wraith",
     "poltergeist",
     "ghost-security",
-    "ghost"
+    "ghost",
+    "bug-bounty",
+    "attack-surface",
+    "pentest",
+    "vulnerability-assessment"
   ]
 }

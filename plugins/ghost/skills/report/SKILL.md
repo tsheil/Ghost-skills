@@ -122,6 +122,7 @@ If a per-scan report does not exist for deps or secrets, note it as unavailable.
    - Fill Scan Coverage table from per-scan report statistics (for code, use finding file counts from Step 5)
    - Add a brief methodology note per scan type that ran (1-2 sentences drawn from per-scan reports)
    - Do NOT include links to per-scan reports or individual finding files — all content is inlined
+   - For the Bug Bounty Submission Briefs section: generate a self-contained submission brief for each verified or confirmed-exploitable finding at high or medium severity. Each brief must include an estimated CVSS 3.1 vector and score, numbered reproduction steps, impact statement tied to business context, and a proof-of-concept snippet (curl command, code path, or captured request/response). If no findings qualify, omit the section entirely.
 3. Write the report to `<scans_dir>/report.md`
 
 ---

@@ -105,6 +105,14 @@ Populate the template with:
 - **Vector**: vector name
 - **CWE**: from criteria yaml
 - **Severity**: your assessed severity (high/medium/low)
+- **CVSS Vector**: estimate a CVSS 3.1 vector string based on the vulnerability characteristics. Use these guidelines:
+  - AV (Attack Vector): N (Network) for remotely exploitable, L (Local) for local access needed
+  - AC (Attack Complexity): L (Low) if straightforward to exploit, H (High) if specific conditions needed
+  - PR (Privileges Required): N (None), L (Low/authenticated user), H (High/admin)
+  - UI (User Interaction): N (None) for server-side, R (Required) for client-side like XSS
+  - S (Scope): C (Changed) if impacts outside the vulnerable component, U (Unchanged) otherwise
+  - C/I/A (Confidentiality/Integrity/Availability): N (None), L (Low), H (High)
+- **CVSS Score**: calculate the approximate numeric score from the vector (e.g., 8.1, 9.8, 6.5)
 - **Status**: `unverified` (always set this to unverified. the verifier will set this to verified or rejected)
 - **Location**: file, line number, function name
 - **Description**: 2-4 sentences describing the vulnerability

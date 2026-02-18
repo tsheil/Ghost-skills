@@ -8,6 +8,8 @@ backend:
     - xml-injection
     - template-injection
     - prompt-injection
+    - ldap-injection
+    - header-injection
   authz:
     - bola
     - bfla
@@ -37,6 +39,16 @@ backend:
     - enumeration
   request_forgery:
     - ssrf
+    - open-redirect
+  cors_security:
+    - cors-misconfiguration
+  oauth_security:
+    - oauth-misconfiguration
+  graphql_security:
+    - graphql-introspection
+    - graphql-injection
+  websocket_security:
+    - websocket-hijacking
   api_security:
     - missing-rate-limit
     - missing-input-validation

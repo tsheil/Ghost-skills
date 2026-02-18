@@ -96,6 +96,32 @@ injection:
       - "No input validation or prompt boundary controls prevent malicious instructions"
       - "Vulnerable code path is reachable remotely over network protocols (HTTP/S, API requests, gRPC, WebSocket) without requiring direct server, container, or filesystem access"
 
+  ldap-injection:
+    candidates: "Files with: LDAP search/bind operations (ldap.Search, ldap_search, SearchRequest, DirectorySearcher), LDAP filter construction with user input, DN construction, LDAP connection/authentication with dynamic credentials"
+    cwe: "CWE-90"
+    severity:
+      high: "Authentication bypass or full directory enumeration"
+      medium: "Partial data exposure through filter manipulation"
+      low: "Limited LDAP query modification in constrained context"
+    criteria:
+      - "User-controlled input is used to construct LDAP search filters or distinguished names (DNs)"
+      - "LDAP filter or DN construction uses string concatenation or interpolation instead of proper escaping or parameterized filters"
+      - "Input is not escaped for LDAP special characters (*, (, ), \\, NUL) before inclusion in queries"
+      - "Vulnerable code path is reachable remotely over network protocols (HTTP/S, API requests, gRPC, WebSocket) without requiring direct server, container, or filesystem access"
+
+  header-injection:
+    candidates: "Files with: HTTP response header setting (setHeader, w.Header().Set, response.addHeader, res.set), redirect URL construction, Location header building, Set-Cookie construction with user input, Content-Type or Content-Disposition with user input"
+    cwe: "CWE-113"
+    severity:
+      high: "HTTP response splitting enabling cache poisoning or XSS"
+      medium: "Header manipulation allowing session fixation or redirect"
+      low: "Limited header modification with minimal security impact"
+    criteria:
+      - "User-controlled input is used to set HTTP response header values"
+      - "Input is not validated or sanitized for CR/LF characters (\\r\\n) before inclusion in headers"
+      - "Header injection allows response splitting, injecting additional headers, or manipulating response structure"
+      - "Vulnerable code path is reachable remotely over network protocols (HTTP/S, API requests, gRPC, WebSocket) without requiring direct server, container, or filesystem access"
+
 authz:
   bola:
     candidates: "API endpoints with resource identifier parameters, data access by that identifier, route handlers for GET/PUT/DELETE of user-owned resources via data storage/database operations"
@@ -322,6 +348,91 @@ request_forgery:
       - "No allowlist restricts accessible hosts, ports, or protocols"
       - "SSRF enables undesired access to internal network resources, cloud metadata endpoints (AWS/GCP/Azure credentials), localhost services, bypassing firewall/network restrictions, or acts as an open proxy"
       - "Attacker can reach resources through SSRF that are not directly accessible from their position (external/public internet, or authenticated API access), without requiring pre-existing access to internal networks, server filesystem, or administrative interfaces"
+
+  open-redirect:
+    candidates: "Files with: redirect operations (http.Redirect, res.redirect, Response.Redirect, 301/302 responses), URL parameters used in redirects (redirect_url, return_to, next, continue, destination), login/logout redirect targets, OAuth callback redirects"
+    cwe: "CWE-601"
+    severity:
+      high: "Redirect enables OAuth token theft, phishing with legitimate domain, or SSO bypass"
+      medium: "Redirect to attacker-controlled site from trusted domain"
+      low: "Redirect with limited exploitation context"
+    criteria:
+      - "User-controlled input determines the redirect destination URL"
+      - "No validation ensures the redirect target is within the application's own domain or an allowlisted domain"
+      - "Redirect accepts arbitrary external URLs including attacker-controlled domains"
+      - "Vulnerable code path is reachable remotely over network protocols (HTTP/S, API requests, gRPC, WebSocket) without requiring direct server, container, or filesystem access"
+
+cors_security:
+  cors-misconfiguration:
+    candidates: "Files with: CORS header configuration (Access-Control-Allow-Origin, Access-Control-Allow-Credentials), CORS middleware setup, origin validation logic, wildcard origin patterns, reflected Origin headers, preflight request handling"
+    cwe: "CWE-942"
+    severity:
+      high: "Arbitrary origin allowed with credentials, enabling cross-site data theft"
+      medium: "Overly permissive origin pattern allowing unintended domains"
+      low: "CORS misconfiguration with limited impact due to non-sensitive endpoints"
+    criteria:
+      - "Application sets Access-Control-Allow-Origin header based on request Origin without strict validation"
+      - "CORS policy reflects arbitrary origins, uses overly broad regex, or allows null origin with credentials"
+      - "Access-Control-Allow-Credentials is set to true alongside permissive origin policy"
+      - "Misconfiguration allows cross-origin requests from attacker-controlled domains to read authenticated responses"
+      - "Vulnerable code path is reachable remotely over network protocols (HTTP/S, API requests, gRPC, WebSocket) without requiring direct server, container, or filesystem access"
+
+oauth_security:
+  oauth-misconfiguration:
+    candidates: "Files with: OAuth authorization flows (authorize, /oauth/authorize, /auth/callback), redirect_uri validation, state parameter handling, token exchange endpoints, OAuth client registration, PKCE implementation, grant type handling"
+    cwe: "CWE-287"
+    severity:
+      high: "Account takeover via redirect_uri manipulation or authorization code theft"
+      medium: "Token leakage through insufficient state validation or CSRF in OAuth flow"
+      low: "Minor OAuth implementation weakness with limited exploitability"
+    criteria:
+      - "Application implements OAuth 2.0 authorization flows (authorization code, implicit, or hybrid)"
+      - "OAuth implementation has security weaknesses: insufficient redirect_uri validation, missing or predictable state parameter, missing PKCE for public clients, or insecure token storage"
+      - "Weakness allows authorization code interception, CSRF attacks on OAuth flow, or token theft through redirect manipulation"
+      - "Vulnerable code path is reachable remotely over network protocols (HTTP/S, API requests, gRPC, WebSocket) without requiring direct server, container, or filesystem access"
+
+graphql_security:
+  graphql-introspection:
+    candidates: "Files with: GraphQL server setup (graphqlHTTP, ApolloServer, graphene, gqlgen), introspection configuration, schema exposure settings, playground/GraphiQL enablement, depth limiting configuration"
+    cwe: "CWE-200"
+    severity:
+      high: "Full schema introspection enabled in production exposing all types, queries, mutations, and internal API surface"
+      medium: "Partial schema exposure through error messages or type suggestions"
+      low: "Schema hints with limited actionable information"
+    criteria:
+      - "Application exposes a GraphQL API endpoint"
+      - "Introspection queries (__schema, __type) are enabled and accessible in production"
+      - "Schema introspection reveals internal types, mutations, queries, and field structures not intended for public consumption"
+      - "No introspection disabling, query depth limiting, or query complexity analysis is configured"
+      - "Vulnerable code path is reachable remotely over network protocols (HTTP/S, API requests, gRPC, WebSocket) without requiring direct server, container, or filesystem access"
+
+  graphql-injection:
+    candidates: "Files with: GraphQL resolver implementations, dynamic query construction, variable handling in resolvers, nested query resolution, batch query processing, subscription handlers"
+    cwe: "CWE-943"
+    severity:
+      high: "Query manipulation enabling unauthorized data access or denial of service through deeply nested queries"
+      medium: "Batch query abuse or excessive data retrieval through query manipulation"
+      low: "Minor query abuse with limited impact"
+    criteria:
+      - "GraphQL resolvers process user-controlled arguments without proper validation or depth limiting"
+      - "No query complexity analysis, depth limiting, or batch size restrictions are implemented"
+      - "Deeply nested or aliased queries can cause resource exhaustion or expose unauthorized data relationships"
+      - "Vulnerable code path is reachable remotely over network protocols (HTTP/S, API requests, gRPC, WebSocket) without requiring direct server, container, or filesystem access"
+
+websocket_security:
+  websocket-hijacking:
+    candidates: "Files with: WebSocket upgrade handlers (ws, socket.io, gorilla/websocket, ActionCable), WebSocket connection authentication, origin validation for WebSocket, WebSocket message handling, cross-origin WebSocket policies"
+    cwe: "CWE-1385"
+    severity:
+      high: "Cross-site WebSocket hijacking enabling data theft or unauthorized actions"
+      medium: "WebSocket connection without proper authentication or origin checks"
+      low: "Minor WebSocket security weakness with limited impact"
+    criteria:
+      - "Application uses WebSocket connections for real-time communication"
+      - "WebSocket upgrade request does not validate Origin header or CSRF token"
+      - "Authenticated WebSocket connections can be hijacked from malicious cross-origin pages"
+      - "Missing origin validation allows attacker-controlled websites to establish WebSocket connections and interact with the API on behalf of authenticated users"
+      - "Vulnerable code path is reachable remotely over network protocols (HTTP/S, API requests, gRPC, WebSocket) without requiring direct server, container, or filesystem access"
 
 api_security:
   missing-rate-limit:
